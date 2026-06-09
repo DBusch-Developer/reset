@@ -64,13 +64,14 @@ function generateLoginCode() {
 async function sendLoginCode(email: string, code: string, name: string) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
+  const appName = process.env.NEXT_PUBLIC_APP_NAME ?? "Reset";
 
   if (!apiKey || !from) {
     if (process.env.NODE_ENV === "production") {
       throw new Error("Passwordless email is not configured. Add RESEND_API_KEY and RESEND_FROM_EMAIL.");
     }
 
-    console.log(`Inflammation Reset login code for ${email}: ${code}`);
+    console.log(`${appName} login code for ${email}: ${code}`);
     return { delivered: false };
   }
 
@@ -83,12 +84,12 @@ async function sendLoginCode(email: string, code: string, name: string) {
     body: JSON.stringify({
       from,
       to: email,
-      subject: "Your Inflammation Reset login code",
-      text: `Hi ${name},\n\nYour Inflammation Reset login code is ${code}. It expires in ${CODE_EXPIRES_MINUTES} minutes.\n\nIf you did not request this code, you can ignore this email.`,
+      subject: `Your ${appName} login code`,
+      text: `Hi ${name},\n\nYour ${appName} login code is ${code}. It expires in ${CODE_EXPIRES_MINUTES} minutes.\n\nIf you did not request this code, you can ignore this email.`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #211a14;">
           <h1 style="margin-bottom: 8px;">Your login code</h1>
-          <p>Use this code to log in to Inflammation Reset:</p>
+          <p>Use this code to log in to ${appName}:</p>
           <p style="font-size: 32px; font-weight: 800; letter-spacing: 6px;">${code}</p>
           <p>This code expires in ${CODE_EXPIRES_MINUTES} minutes.</p>
           <p>If you did not request this code, you can ignore this email.</p>
